@@ -38,3 +38,4 @@ For now I will keep working with python, its packages, and virtual enviroments i
 programming works in general and python more specifically for now. 
 
 Also started to figure out how to work with .git! Hello world! 
+UPD (08.07.2024): Realized how little I knew about everything related to programming! I'm still learning and will keep studying.
