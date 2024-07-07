@@ -5,6 +5,7 @@ import requests
 import json
 import os
 from config import TELEGRAM_TOKEN, STEAM_API_KEY
+from IPython.display import Markdown
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -121,9 +122,9 @@ def show_user(update: Update, context: CallbackContext) -> None:
         update.message.reply_text(f'Failed to fetch match history for DotA ID {dotaid}.')
     else:
         results = "\n".join([
-            f"{match['match_id']}: {'Won' if match['radiant_win'] == (match['player_slot'] < 128) else 'Lost'} - Hero: {get_hero_name(match['hero_id'])}"
+            f"<a href='https://stratz.com/matches/{match['match_id']}'>{match['match_id']}: </a>{'Won as' if match['radiant_win'] == (match['player_slot'] < 128) else 'Lost as'} - {get_hero_name(match['hero_id'])}"
             for match in match_history])
-        update.message.reply_text(f'Last 10 games results for {steam_user_name}:\n{results}')
+        update.message.reply_text(f'Last 10 games results for {steam_user_name}:\n{results}', parse_mode='HTML')
 
 
 def reset_user(update: Update, context: CallbackContext) -> None:
