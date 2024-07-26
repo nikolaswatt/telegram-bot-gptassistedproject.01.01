@@ -39,7 +39,8 @@ def start(update: Update, context: CallbackContext) -> None:
         "/changeuser <alias> <newalias> - Change the alias of the user",
         "/userlist - Show all registered aliases",
         "/commandlist - Show all available commands",
-        "/addnickname <alias> <nickname> - Add a nickname for a registered alias"
+        "/addnickname <alias> <nickname> - Add a nickname for a registered alias",
+        "/ids - Show every alias and their DotA ID"
     ]
     update.message.reply_text(
         "Welcome to the Steam Status Bot! Use the commands below to manage users:\n" + "\n".join(commands))
@@ -76,8 +77,7 @@ def add_nickname(update: Update, context: CallbackContext) -> None:
         return
 
     # Check if nickname is already taken or is a nickname itself
-    if nickname in (existing_alias.lower() for existing_alias in user_data) or 'nickname' in user_data.get(nickname,
-                                                                                                           {}):
+    if nickname in (existing_alias.lower() for existing_alias in user_data) or 'nickname' in user_data.get(nickname, {}):
         update.message.reply_text('Nickname is already taken or cannot be used as a nickname.')
         return
 
@@ -191,7 +191,8 @@ def command_list(update: Update, context: CallbackContext) -> None:
         "/changeuser <alias> <newalias> - Change the alias of the user",
         "/userlist - Show all registered aliases",
         "/commandlist - Show all available commands",
-        "/addnickname <alias> <nickname> - Add a nickname for a registered alias"
+        "/addnickname <alias> <nickname> - Add a nickname for a registered alias",
+        "/ids - Show every alias and their DotA ID"
     ]
     update.message.reply_text("Available commands:\n" + "\n".join(commands))
 
@@ -272,6 +273,14 @@ def get_steam_user_name(steam_id):
     return "Unknown"
 
 
+def show_ids(update: Update, context: CallbackContext) -> None:
+    if not user_data:
+        update.message.reply_text('No users registered.')
+    else:
+        ids_list = [f'{alias}: {data["dotaid"]}' for alias, data in user_data.items() if 'dotaid' in data]
+        update.message.reply_text(f'Alias and DotA IDs:\n' + '\n'.join(ids_list))
+
+
 def main() -> None:
     load_user_data()
     updater = Updater(TELEGRAM_TOKEN, use_context=True)
@@ -285,6 +294,7 @@ def main() -> None:
     dp.add_handler(CommandHandler("userlist", user_list))
     dp.add_handler(CommandHandler("commandlist", command_list))
     dp.add_handler(CommandHandler("addnickname", add_nickname))
+    dp.add_handler(CommandHandler("ids", show_ids))
 
     updater.start_polling()
     updater.idle()
